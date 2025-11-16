@@ -4,6 +4,9 @@ import cors from "cors";
 import dotenv from "dotenv";
 import pool from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
+import apiKeyRoutes from "./routes/apiKeyRoutes.js";
+import predictRoutes from "./routes/predictRoutes.js";
+import { initSocket } from "./socket.js";
 
 dotenv.config();
 
@@ -32,13 +35,18 @@ pool
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/apikeys", apiKeyRoutes);
+app.use("/api", predictRoutes);
 
 // Test route
 app.get("/", (req, res) => {
   res.send("API is running!");
 });
 
-// Start server
-app.listen(PORT, () => {
+// Start server with Socket.IO
+const server = app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
+// Initialize Socket.IO
+initSocket(server);
